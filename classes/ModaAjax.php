@@ -1,6 +1,7 @@
 <?php
 namespace Moda;
 
+use Moda\DB\ModaStylists;
 class ModaAjax {
     private static $instance = null;
 
@@ -21,17 +22,43 @@ class ModaAjax {
     public function moda_save_stylist_details() {
         check_ajax_referer('moda_ajax_nonce', '_ajax_nonce');
 
-        $stylist_id = isset($_POST['stylist_id']) ? intval($_POST['stylist_id']) : 0;
-        $stylist_data = isset($_POST['stylist_data']) ? $_POST['stylist_data'] : [];
+        $stylist_id = isset($_POST['stylist_id']) ? (int) $_POST['stylist_id'] : 0;
+        $stylist_data = isset($_POST['stylist_data']) && is_array($_POST['stylist_data'])
+            ? wp_unslash($_POST['stylist_data'])
+            : [];
 
-        if ($stylist_id && !empty($stylist_data)) {
-            $stylist_db = new \Moda\DB\ModaStylists();
-            $stylist_db->save_item(array_merge(['id' => $stylist_id], $stylist_data));
-
-            wp_send_json_success(['message' => 'Stylist details saved successfully.']);
-        } else {
-            wp_send_json_error(['message' => 'Invalid stylist ID or data.']);
+        $payload = [];
+        $field_map = [
+            'stylist_full_name' => 'full_name',
+            'stylist_email' => 'email',
+            'stylist_phone' => 'phone',
+            'stylist_instagram' => 'instagram',
+            'stylist_website' => 'website',
+        ];
+        foreach ($field_map as $input_key => $field) {
+            if (!array_key_exists($input_key, $stylist_data)) {
+                continue;
+            }
+            $value = $stylist_data[$input_key];
+            if ($field === 'email') {
+                $payload[$field] = sanitize_email($value);
+            } elseif ($field === 'website') {
+                $payload[$field] = esc_url_raw($value);
+            } else {
+                $payload[$field] = sanitize_text_field($value);
+            }
         }
+
+        if ($stylist_id <= 0 || empty($payload)) {
+            wp_send_json_error(['message' => 'Invalid stylist ID or data.'], 400);
+        }
+
+        $result = ModaStylists::instance()->save_item(array_merge(['id' => $stylist_id], $payload));
+        if ($result === false) {
+            wp_send_json_error(['message' => 'Failed to save stylist details.'], 500);
+        }
+
+        wp_send_json_success(['message' => 'Stylist details saved successfully.']);
     }
 
     public function moda_search_celebrities() {
