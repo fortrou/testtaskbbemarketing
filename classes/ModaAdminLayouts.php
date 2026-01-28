@@ -1,6 +1,9 @@
 <?php
 namespace Moda;
 
+use Moda\DB\ModaStylistReps;
+use Moda\DB\ModaCelebrities;
+
 if (!class_exists('WP_List_Table')) {
     require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
@@ -149,7 +152,7 @@ class ModaAdminLayouts {
         if ($action === 'add_rep') {
             $rep_name = isset($_POST['rep_name']) ? sanitize_text_field(wp_unslash($_POST['rep_name'])) : '';
             if ($rep_name) {
-                $wpdb->insert($reps_table, [
+                $rep_db = ModaStylistReps::instance()->save_item([
                     'stylist_id' => $stylist_id,
                     'rep_name' => $rep_name,
                     'company' => isset($_POST['company']) ? sanitize_text_field(wp_unslash($_POST['company'])) : null,
@@ -163,21 +166,17 @@ class ModaAdminLayouts {
         } elseif ($action === 'attach_celebrity') {
             $celebrity_id = isset($_POST['celebrity_id']) ? (int) $_POST['celebrity_id'] : 0;
             if ($celebrity_id) {
-                $wpdb->query($wpdb->prepare(
-                    "INSERT IGNORE INTO $join_table (stylist_id, celebrity_id) VALUES (%d, %d)",
-                    $stylist_id,
-                    $celebrity_id
-                ));
+                $celeb_db = ModaCelebrities::instance()->attach_to_stylist($stylist_id, $celebrity_id);
             }
         } elseif ($action === 'remove_rep') {
             $rep_id = isset($_POST['rep_id']) ? (int) $_POST['rep_id'] : 0;
             if ($rep_id) {
-                $wpdb->delete($reps_table, ['id' => $rep_id, 'stylist_id' => $stylist_id], ['%d', '%d']);
+                $rep_db = ModaStylistReps::instance()->delete_item($rep_id);
             }
         } elseif ($action === 'detach_celebrity') {
             $celebrity_id = isset($_POST['celebrity_id']) ? (int) $_POST['celebrity_id'] : 0;
             if ($celebrity_id) {
-                $wpdb->delete($join_table, ['stylist_id' => $stylist_id, 'celebrity_id' => $celebrity_id], ['%d', '%d']);
+                $celeb_db = ModaCelebrities::instance()->detach_from_stylist($stylist_id, $celebrity_id);
             }
         }
 
