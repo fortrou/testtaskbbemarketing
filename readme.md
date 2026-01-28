@@ -20,27 +20,35 @@ All write endpoints require `manage_options` permission (401 if not logged in, 4
 - `GET /stylists`  
   Query params: `page`, `per_page`, `q` (search by stylist name), `sort` (`name` or `updated_at`), `order` (`ASC`/`DESC`), `celebrity` (ID or celebrity name).  
   Response: basic stylist fields + `celebrity_count`.  
+  http://wplocal.test:8080/wp-json/moda/v1/stylists?page=1&per_page=20&celebrity=Alex
 
 - `GET /stylists/{id}`  
   Returns stylist, reps, and celebrities.
+  http://wplocal.test:8080/wp-json/moda/v1/stylists/2000
 
 - `POST /stylists`  
   Create a stylist.
+  http://wplocal.test:8080/wp-json/moda/v1/stylists
 
 - `PATCH /stylists/{id}`  
   Update a stylist.
+  http://wplocal.test:8080/wp-json/moda/v1/stylists/128
 
 - `POST /stylists/{id}/celebrities/{celebrity_id}`  
   Attach a celebrity to a stylist.
+  http://wplocal.test:8080/wp-json/moda/v1/stylists/200/celebrities/556
 
 - `DELETE /stylists/{id}/celebrities/{celebrity_id}`  
   Detach a celebrity from a stylist.
+  http://wplocal.test:8080/wp-json/moda/v1/stylists/200/celebrities/556
 
 - `POST /stylists/{id}/reps`  
   Add a representative to a stylist.
+  http://wplocal.test:8080/wp-json/moda/v1/stylists/200/reps
 
 - `DELETE /reps/{id}`  
   Remove a representative.
+  http://wplocal.test:8080/wp-json/moda/v1/reps/669
 
 ## Admin AJAX Actions
 - `moda_save_stylist_details` — save stylist fields from admin UI.

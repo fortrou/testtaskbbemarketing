@@ -3,11 +3,11 @@ namespace Moda;
 
 use Moda\ModaAdminLayouts;
 use Moda\ModaAjax;
+use Moda\ModaApi;
 
 class ModaApp {
 
     private static $instance = null;
-    private $namespace = 'moda/v1';
 
     private function __construct() {}
 
@@ -21,6 +21,7 @@ class ModaApp {
     public function run_actions() {
         ModaAdminLayouts::instance()->run_actions();
         ModaAjax::instance()->run_actions();
+        ModaApi::instance()->run_actions();
     }
 
     public static function run_deltas() {
