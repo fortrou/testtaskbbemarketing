@@ -112,28 +112,4 @@ class ModaStylistReps extends ModaDB {
         return $wpdb->get_results($wpdb->prepare($sql, $params), ARRAY_A);
     }
 
-    public function run_delta() {
-        global $wpdb;
-
-        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-
-        $charset_collate = $wpdb->get_charset_collate();
-        $table = $wpdb->prefix . 'moda_stylist_reps';
-
-        $sql = "CREATE TABLE $table (
-            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-            stylist_id bigint(20) unsigned NOT NULL,
-            rep_name varchar(255) NOT NULL,
-            company varchar(255) DEFAULT NULL,
-            rep_email varchar(255) DEFAULT NULL,
-            rep_phone varchar(255) DEFAULT NULL,
-            territory varchar(255) DEFAULT NULL,
-            created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            PRIMARY KEY  (id),
-            KEY idx_stylist_id (stylist_id)
-        ) $charset_collate;";
-
-        dbDelta($sql);
-    }
 }

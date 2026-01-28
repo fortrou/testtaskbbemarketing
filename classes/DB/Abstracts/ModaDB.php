@@ -19,7 +19,6 @@ abstract class ModaDB {
     abstract public function get_item($id);
     abstract public function save_item($data);
     abstract public function delete_item($id);
-    abstract protected function run_delta();
     public function get_list($filters) {
         return [];
     }

@@ -144,25 +144,4 @@ class ModaCelebrities extends ModaDB {
         return $result > 0;
     }
 
-    public function run_delta() {
-        global $wpdb;
-
-        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-
-        $charset_collate = $wpdb->get_charset_collate();
-        $table = $wpdb->prefix . 'moda_celebrities';
-
-        $sql = "CREATE TABLE $table (
-            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-            full_name varchar(255) NOT NULL,
-            industry varchar(255) DEFAULT NULL,
-            created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            PRIMARY KEY  (id),
-            KEY idx_celeb_full_name (full_name(191)),
-            KEY idx_industry (industry(191))
-        ) $charset_collate;";
-
-        dbDelta($sql);
-    }
 }
