@@ -21,12 +21,14 @@ class ModaApi {
     public function mount_routes() {
         register_rest_route($this->namespace, '/stylists', [
             'methods'   => 'GET',
-            'callback'  => [$this, 'get_stylists']
+            'callback'  => [$this, 'get_stylists'],
+            'permission_callback' => '__return_true'
         ]);
 
         register_rest_route($this->namespace, '/stylists/(?P<id>\d+)', [
             'methods'   => 'GET',
-            'callback'  => [$this, 'get_item']
+            'callback'  => [$this, 'get_item'],
+            'permission_callback' => '__return_true'
         ]);
 
         register_rest_route($this->namespace, '/stylists', [
